@@ -1,0 +1,9 @@
+{
+    "name": "obana/app",
+    "autoload": {
+        "psr-4": {
+            "Obana\\App\\": "src/"
+        }
+    },
+    "require": {}
+}
