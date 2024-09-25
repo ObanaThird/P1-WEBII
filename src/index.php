@@ -12,46 +12,74 @@ $uri = $_SERVER['REQUEST_URI'];
 
 switch($method) {
     case 'GET':
-        switch($uri) {
-            case '/products':
-                if(preg_match('/\/users\/(\+d)/', $uri, $match)){
-                    $id = $match[1];
-                    $productController = new ProductController();
-                    $productController->getProducts($id);
-                    http_response_code(200);
-                    var_dump($id);
-                } else {
-                    $productController = new ProductController;
-                    $productController->getAllProducts();
-                }              
+        $id = null;
+        if (preg_match('/\/products\/(\d+)/', $uri, $match)) {
+            $id = $match[1];
+        }
+
+        switch (true) {
+            case ($id !== null):
+                $productController = new ProductController();
+                $productController->getProducts($id);
             break;
-           
+
+            case ($uri === '/products'):
+                $productController = new ProductController();
+                $productController->getAllProducts();
+            break;
+            case ($uri === '/logs'):
+                $productController = new ProductController();
+                $productController->getLogs();
+            break;
+
+            default:
+                http_response_code(404);
+                echo "Endpoint não encontrado.";
+            break;
         }
     break;
 
     case 'POST':
         switch($uri) {
             case '/products';
-            $data = json_decode(file_get_contents('php://input'), true);
-        
-            if (empty($data['name']) || empty($data['description']) || empty($data['price']) || empty($data['storage'])) {
-                http_response_code(400);
-                echo json_encode(['message' => 'Todos os campos são obrigatórios.']);
-                return;
-            }
+                $data = json_decode(file_get_contents('php://input'), true);
+                $productController = new ProductController();
+                $productController->postProducts($data, $method);
+            break;
 
-            $productController = new ProductController();
-            $productController->postProducts($data);
-
-            /*
-            {
-                "name": "sacoasdasdla",
-                "description": "meeqwqweal",
-                "price": 19.99,
-                "storage": 3
-            }
-            */
+            default:
+                http_response_code(404);
+                echo "Endpoint não encontrado.";
             break;
         }
     break;
+
+    case 'PUT':
+        $id = null;
+        if (preg_match('/\/products\/(\d+)/', $uri, $match)) {
+            $id = $match[1];
+        }
+                
+        switch(true) {
+            case ($id !== null):
+                $data = json_decode(file_get_contents('php://input'), true);
+                $productController = new ProductController();
+                $productController->putProducts($id, $data, $method);
+            break;
+        }   
+    break;
+    case 'DELETE':
+        $id = null;
+        if (preg_match('/\/products\/(\d+)/', $uri, $match)) {
+            $id = $match[1];
+        }
+                
+        switch(true) {
+            case ($id !== null):
+                $productController = new ProductController();
+                $productController->deleteProducts($id, $method);
+            break;
+        }  
+    break;
+            
 }
