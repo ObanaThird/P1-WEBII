@@ -8,9 +8,8 @@ class DatabaseConnection {
     private $path;
 
     public function __construct() {
-        $this->path = __DIR__ . '/productManagement.sqlite';
+        $this->path = __DIR__ . '/ProductsDatabase.sqlite';
     }
-
 
     public function getConnection(){
         try {

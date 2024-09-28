@@ -9,15 +9,28 @@ use PDOException;
 
 class ProductRepository {
     private $connection;
+    private $datetime;
+
     public function __construct() {
         $database = new DatabaseConnection();
         $this->connection = $database->getConnection();
+
+        date_default_timezone_set('America/Sao_Paulo');
+        $this->datetime = date('d/m/Y h:i:s a', time());
     }
 
     public function selectAllProducts() {
         $pdoStmt = $this->connection->prepare("SELECT * FROM Products");
-        $pdoStmt->execute();
-        return $pdoStmt->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            if ($pdoStmt->execute()) {
+                $result = $pdoStmt->fetchAll(PDO::FETCH_ASSOC);
+                if ($result > 0) {
+                    return $result;
+                }
+            }
+        } catch (PDOException) {
+            return false;
+        }
 
     }
 
@@ -25,9 +38,16 @@ class ProductRepository {
         $id = $product->getId();
         $pdoStmt = $this->connection->prepare("SELECT * FROM Products WHERE id = :id");
         $pdoStmt->bindParam(':id', $id);
-        $pdoStmt->execute();
-        $result = $pdoStmt->fetch(PDO::FETCH_ASSOC);
-        return $result;
+        try {
+            if ($pdoStmt->execute()) {
+                $result = $pdoStmt->fetch(PDO::FETCH_ASSOC);
+                if ($result > 0) {
+                    return $result;
+                }
+            }
+        } catch (PDOException) {
+            return false;
+        }
     }
 
     public function insertProducts(Product $product) {
@@ -36,10 +56,12 @@ class ProductRepository {
         $price = $product->getPrice();
         $storage = $product->getStorage();
         $userInsert = $product->getUserInsert();
-        date_default_timezone_set('America/Sao_Paulo');
-        $datetime = date('d/m/Y h:i:s a', time());
+        $datetime = $this->datetime;
 
-        $pdoStmt = $this->connection->prepare("INSERT INTO Products (name, description, price, storage, userInsert, date_time) VALUES (:name, :description, :price, :storage, :userInsert, :date_time)");
+        $pdoStmt = $this->connection->prepare("INSERT INTO Products 
+        (name, description, price, storage, userInsert, date_time) VALUES 
+        (:name, :description, :price, :storage, :userInsert, :date_time)");
+
         $pdoStmt->bindParam(':name', $name);
         $pdoStmt->bindParam(':description', $description);
         $pdoStmt->bindParam(':price', $price);
@@ -50,105 +72,78 @@ class ProductRepository {
             if ($pdoStmt->execute()) {
                 $rowsAffected = $pdoStmt->rowCount();
                 if ($rowsAffected > 0) {
-                    echo "Produto cadastrado com sucesso. Linhas afetadas: $rowsAffected";
-                    $this->insertLogs($product);
+                    return $rowsAffected;
                 } else {
-                    echo "Produto não cadastrado. Linhas afetadas: $rowsAffected";
+                    return false;
                 }
+                
             }
-        } catch (PDOException $e) {
-            echo "Erro ao cadastrar o produto: " . $e->getMessage();
+        } catch (PDOException) {
+            return false;
         }
     }
 
     public function updateProducts(Product $product) {
-        $id = $product->getId();
-        $name = $product->getName();
-        $description = $product->getDescription();
-        $price = $product->getPrice();
-        $storage = $product->getStorage();
-        $userInsert = $product->getUserInsert();
-
-        $pdoStmt = $this->connection->prepare("
-            UPDATE Products 
-            SET name = :name, 
-                description = :description, 
-                price = :price, 
-                storage = :storage, 
-                userInsert = :userInsert 
-            WHERE id = :id
-        ");
-
-        $pdoStmt->bindParam(':id', $id);
-        $pdoStmt->bindParam(':name', $name);
-        $pdoStmt->bindParam(':description', $description);
-        $pdoStmt->bindParam(':price', $price);
-        $pdoStmt->bindParam(':storage', $storage);
-        $pdoStmt->bindParam(':userInsert', $userInsert);
+        $idVerified = $this->selectProducts($product);
+        
         try {
-            if ($pdoStmt->execute()) {
-                $rowsAffected = $pdoStmt->rowCount();
-                if ($rowsAffected > 0) {
-                    echo "Produto atualizado com sucesso. Linhas afetadas: $rowsAffected";
-                    $this->insertLogs($product);
-                } else {
-                    echo "Produto não encontrado. Linhas afetadas: $rowsAffected";
+            if($idVerified !== false) {
+                $id = $product->getId();
+                $name = $product->getName();
+                $description = $product->getDescription();
+                $price = $product->getPrice();
+                $storage = $product->getStorage();
+                $userInsert = $product->getUserInsert();
+
+                $pdoStmt = $this->connection->prepare("
+                    UPDATE Products 
+                    SET name = :name, 
+                        description = :description, 
+                        price = :price, 
+                        storage = :storage, 
+                        userInsert = :userInsert 
+                    WHERE id = :id
+                ");
+
+                $pdoStmt->bindParam(':id', $id);
+                $pdoStmt->bindParam(':name', $name);
+                $pdoStmt->bindParam(':description', $description);
+                $pdoStmt->bindParam(':price', $price);
+                $pdoStmt->bindParam(':storage', $storage);
+                $pdoStmt->bindParam(':userInsert', $userInsert);
+                if ($pdoStmt->execute()) {
+                    $rowsAffected = $pdoStmt->rowCount();
+                    if ($rowsAffected > 0) {
+                        return $rowsAffected;
+                    } else {
+                        return false;
+                    }
                 }
             }
-        } catch (PDOException $e) {
-            echo "Erro ao atualizar o produto: " . $e->getMessage();
+        } catch (PDOException) {
+            return false;
         }
-
     }
 
     public function eraseProducts(Product $product) {
-        $id = $product->getId();
+        $idVerified = $this->selectProducts($product);
 
-        $pdoStmt = $this->connection->prepare("DELETE FROM Products WHERE id = :id");
-        $pdoStmt->bindParam(':id', $id);
         try {
-            if ($pdoStmt->execute()) {
-                $rowsAffected = $pdoStmt->rowCount();
-                if ($rowsAffected > 0) {
-                    echo "Produto excluído com sucesso. Linhas afetadas: $rowsAffected";
-                    $this->insertLogs($product);
-                } else {
-                    echo "Produto não encontrado. Linhas afetadas: $rowsAffected";
+            $id = $product->getId();
+            if($idVerified !== false) {
+                $pdoStmt = $this->connection->prepare("DELETE FROM Products WHERE id = :id");
+                $pdoStmt->bindParam(':id', $id);
+                if ($pdoStmt->execute()) {
+                    $rowsAffected = $pdoStmt->rowCount();
+                    if ($rowsAffected > 0) {
+                        return $rowsAffected;
+                    } else {
+                        return false;
+                    } 
                 }
             }
-        } catch (PDOException $e) {
-            echo "Erro ao excluir o produto: " . $e->getMessage();
+        } catch (PDOException) {
+            return false;
         }
-    }
-
-    public function insertLogs(Product $product){
-        $operationType =  $product->getOperationType();
-        date_default_timezone_set('America/Sao_Paulo');
-        $datetime = date('d/m/Y h:i:s a', time());
-        $id = $product->getId();
-        if($id === null) {
-            $id = $this->idNull();
-        }
-        
-        $pdoStmt = $this->connection->prepare("INSERT INTO Logs (operationType, date_time, idProduct) VALUES (:operationType, :date_time, :idProduct)");
-        $pdoStmt->bindParam(':operationType', $operationType);
-        $pdoStmt->bindParam(':date_time', $datetime);
-        $pdoStmt->bindParam(':idProduct', $id);
-        $pdoStmt->execute();
-    }
-
-    public function idNull() {
-        $pdoStmt = $this->connection->prepare("SELECT id FROM Products ORDER BY id DESC LIMIT 1");
-        $pdoStmt->execute();
-        $result = $pdoStmt->fetch(PDO::FETCH_ASSOC);
-        return $result['id'];
-
-    }
-
-    public function selectLogs() {
-        $pdoStmt = $this->connection->prepare("SELECT * FROM Logs");
-        $pdoStmt->execute();
-        return $pdoStmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-        
+    }       
 }

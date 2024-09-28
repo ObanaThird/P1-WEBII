@@ -9,7 +9,6 @@ class Product {
     private $price;
     private $storage;
     private $userInsert;
-    private $datetime;
     private $operationType;
 
     public function getId() {
@@ -58,14 +57,6 @@ class Product {
     
     public function setUserInsert($userInsert) {
         $this->userInsert = $userInsert;
-    }
-
-    public function getDatetime() {
-        return $this->datetime;
-    }
-    
-    public function setDatetime($datetime) {
-        $this->datetime = $datetime;
     }
 
     public function getOperationType() {

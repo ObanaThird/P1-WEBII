@@ -5,6 +5,7 @@ namespace Obana\App;
 require_once '../vendor/autoload.php';
 
 use Obana\App\Controller\ProductController;
+use Obana\App\Controller\LogController;
 
 $method = $_SERVER['REQUEST_METHOD'];
 $uri = $_SERVER['REQUEST_URI'];
@@ -28,8 +29,8 @@ switch($method) {
                 $productController->getAllProducts();
             break;
             case ($uri === '/logs'):
-                $productController = new ProductController();
-                $productController->getLogs();
+                $productController = new LogController();
+                $productController->getAllLogs();
             break;
 
             default:
@@ -66,8 +67,14 @@ switch($method) {
                 $productController = new ProductController();
                 $productController->putProducts($id, $data, $method);
             break;
+
+            default:
+                http_response_code(404);
+                echo "Endpoint não encontrado.";
+            break;
         }   
     break;
+    
     case 'DELETE':
         $id = null;
         if (preg_match('/\/products\/(\d+)/', $uri, $match)) {
@@ -79,7 +86,11 @@ switch($method) {
                 $productController = new ProductController();
                 $productController->deleteProducts($id, $method);
             break;
+
+            default:
+                http_response_code(404);
+                echo "Endpoint não encontrado.";
+            break;
         }  
-    break;
-            
+break;     
 }
