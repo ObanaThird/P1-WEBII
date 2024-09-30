@@ -98,9 +98,6 @@
   <ul>
     <li>Até o início do projeto, eu não sabia como enviar dados no formato JSON pelo corpo da requisição, tampouco como lidar com esses dados na aplicação;</li>
     <li>Não sabia como usar a data do sistema usando PHP, até então só tinha visto como usar direto do banco de dados ou do sistema em C# e Java;</li>
-    <li>Além de não estar presente na aula em que foi explicado como criar a documentação do postman, o uso durante o projeto foi o meu primeiro contato com a ferramenta;</li>
-    <li>Extra! Um dos momentos do desenvolvimento:</li>
+    <li>Além de não estar presente na aula em que foi explicado como criar a documentação do postman, o uso durante o projeto foi o meu primeiro contato com a ferramenta.</li>
   </ul>
 </i></p>
-
-![rush](https://github.com/user-attachments/assets/78d9b0f1-8499-44fc-be51-223e4ca4cd40)
