@@ -56,7 +56,7 @@
 ![image](https://github.com/user-attachments/assets/30f36082-9ccf-449c-b056-78e2d991f702)
 
 <p><i>
-  No caso da função insertLogs() ser chamada apartir da função postProducts(), uma consulta no banco é feita antes de executar a inserção do log na tabela Logs para verificar qual foi o id da ultima linha criada na tabela Products. Caso encontre, retorna qual foi o 
+  No caso da função insertLogs() ser chamada a partir da função postProducts(), uma consulta no banco é feita antes de executar a inserção do log na tabela Logs para verificar qual foi o id da ultima linha criada na tabela Products. Caso encontre, retorna qual foi o 
   útilmo id criado.
 </i></p>
 
@@ -81,7 +81,7 @@
   As funções são bem simples de modo geral, possuindo validações com if e retornando verdadeiro ou falso para tratar o resultado na camada Controller.
 </p>
 <p>
-  A função mais elaborada é a validateFields(), com um pouco de lógica, ela recebe os dados recebidos no corpo da requisição, quais campos são os campos necessários e verifica se todos esses campos foram preenchios. Caso haja campos em branco, a função retorna esses campos.
+  A função mais elaborada é a validateFields(), com um pouco de lógica, ela recebe os dados recebidos no corpo da requisição, quais campos são os campos necessários e verifica se todos esses campos foram preenchidos. Caso haja campos em branco, a função retorna esses campos.
 </p>
 </i>
 
