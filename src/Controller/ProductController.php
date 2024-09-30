@@ -2,6 +2,7 @@
 
 namespace Obana\App\Controller;
 
+use Obana\App\Functions\GreaterThanTwo;
 use Obana\App\Functions\GreaterThanZero;
 use Obana\App\Functions\LowerThanThree;
 use Obana\App\Functions\PositivePrice;
@@ -71,8 +72,8 @@ Class ProductController {
             return;
         }
 
-        $lowerThanThree = new LowerThanThree();
-        $resultLower = $lowerThanThree->lowerThanThree($data);
+        $lowerThanThree = new greaterThanTwo();
+        $resultLower = $lowerThanThree->greaterThanTwo($data);
 
         if($resultLower === false) {
             http_response_code(400);
@@ -147,8 +148,8 @@ Class ProductController {
             return;
         }
 
-        $lowerThanThree = new LowerThanThree();
-        $resultLower = $lowerThanThree->lowerThanThree($data);
+        $lowerThanThree = new GreaterThanTwo();
+        $resultLower = $lowerThanThree->greaterThanTwo($data);
 
         if($resultLower === false) {
             http_response_code(400);
