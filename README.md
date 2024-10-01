@@ -41,7 +41,7 @@
 <p><i>
   Tanto a função de atualizar um produto existente no banco de dados quanto a função de criar um novo produto deveriam gerar um log. Para um produto existente a solução era óbvia dados os atributos da tabela logs:
   <ul>
-    <li>id; (gerado automáticamente)</li>
+    <li>id; (gerado automaticamente)</li>
     <li>operationType;</li>
     <li>date_time;</li>
     <li>idProduct.</li>
