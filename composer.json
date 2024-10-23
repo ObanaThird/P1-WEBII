@@ -5,5 +5,8 @@
             "Obana\\App\\": "src/"
         }
     },
-    "require": {}
+    "require": {
+        "firebase/php-jwt": "^6.10",
+        "vlucas/phpdotenv": "^5.6"
+    }
 }

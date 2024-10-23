@@ -34,8 +34,20 @@ class ProductManagement {
         idProduct INTEGER);');
     }
 
+    public function createUsers(){
+        $this->connection->exec('
+        CREATE TABLE Users
+        (id INTEGER PRIMARY KEY, 
+        userName TEXT,
+        email TEXT,
+        userPassword TEXT);');
+    }
+
 }
 
 $ProductManagement = new ProductManagement();
+
 $ProductManagement->createProducts();
 $ProductManagement->createLogs();
+
+$ProductManagement->createUsers();

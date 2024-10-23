@@ -4,7 +4,6 @@ namespace Obana\App\Controller;
 
 use Obana\App\Functions\GreaterThanTwo;
 use Obana\App\Functions\GreaterThanZero;
-use Obana\App\Functions\LowerThanThree;
 use Obana\App\Functions\PositivePrice;
 use Obana\App\Functions\ValidateFields;
 use Obana\App\Model\Product;
